@@ -1,12 +1,16 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const path = require('path');
-const passport = require('passport');
-const initializePassport = require('./config/passport');
+import 'dotenv/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import session from 'express-session';
+import MongoStore from 'connect-mongo';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import passport from 'passport';
+import initializePassport from './config/passport.js';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
+
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB Atlas'))
   .catch(err => console.error('MongoDB connection error:', err));
@@ -14,7 +18,11 @@ mongoose.connect(process.env.MONGODB_URI)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'views')));
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -31,15 +39,31 @@ initializePassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', require('./routes/pages'));
-app.use('/auth', require('./routes/auth'));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/auth', 'login.html'));
+});
+
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/auth', 'signup.html'));
+});
+
+
+import authRoutes from './routes/auth.js';
+app.use('/api', authRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).sendFile(path.join(__dirname, 'public/errors', '500.html'));
 });
 
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public/errors', '404.html'));
+});
 
 process.on('SIGINT', () => {
   mongoose.connection.close(() => {
