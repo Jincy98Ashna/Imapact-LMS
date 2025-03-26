@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.static(path.join(__dirname, 'public/js')));
 
 
 app.use(session({
@@ -60,6 +61,12 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).sendFile(path.join(__dirname, 'public/errors', '500.html'));
 });
+app.use((req, res, next) => {
+  const isMobile = /Mobile|Android|iPhone/i.test(req.headers['user-agent']);
+  res.locals.isMobile = isMobile;
+  next();
+});
+
 
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, 'public/errors', '404.html'));
