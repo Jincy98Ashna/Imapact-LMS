@@ -19,3 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'no-touch'
     );
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const abstractBg = document.querySelector('.abstract-bg');
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      abstractBg.style.willChange = 'transform';
+      abstractBg.style.backfaceVisibility = 'hidden';
+    }
+    
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        abstractBg.style.animationPlayState = 'paused';
+      } else {
+        abstractBg.style.animationPlayState = 'running';
+      }
+    });
+  });

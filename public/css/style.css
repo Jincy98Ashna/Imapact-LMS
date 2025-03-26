@@ -66,6 +66,9 @@
     color: white;
     text-decoration: none;
   }
+  nav {
+    display: block;
+  }
   
   .mobile-menu-btn {
     display: none;
@@ -76,25 +79,29 @@
     cursor: pointer;
   }
   
-  nav ul {
-    display: flex;
-    list-style: none;
-    gap: 1rem;
-  }
+  @media (max-width: 768px) {
+    .mobile-menu-btn {
+      display: block;
+    }
   
-  nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
-    padding: 0.5rem;
-    display: block;
-  }
+    nav {
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      width: 100%;
+      background: var(--dark-color);
+      padding: 1rem;
+    }
   
-  nav ul li a:hover {
-    color: var(--accent-color);
-  }
+    nav.active {
+      display: block;
+    }
   
+    nav ul {
+      flex-direction: column;
+    }
+  }
   .btn-login {
     background-color: rgba(255, 255, 255, 0.2);
     padding: 0.5rem 1.5rem;
@@ -112,28 +119,50 @@
   padding: 0 1rem;
   margin: 0 auto;
 }
-
 .abstract-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  z-index: -1;
-}
-
-.abstract-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('/images/abstract-pattern.jpeg') repeat;
-  opacity: 0.05;
-}
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    z-index: -1;
+    overflow: hidden;
+  }
   
+
+  .abstract-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(circle at 25% 25%, 
+        rgba(255,255,255,0.1) 0%, 
+        transparent 15%) 0 0,
+      radial-gradient(circle at 75% 75%, 
+        rgba(255,255,255,0.05) 0%, 
+        transparent 20%) 0 0;
+    background-size: 300px 300px;
+    animation: patternMove 60s linear infinite;
+    opacity: 0.3;
+  }
+  
+
+  @keyframes patternMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-50%, -50%); }
+  }
+  
+ 
+  @media (max-width: 768px) {
+    .abstract-bg::before {
+      background-size: 150px 150px; 
+      animation-duration: 120s; 
+    }
+  }
   .hero {
     padding: 6rem 0 2rem;
     min-height: 100vh;

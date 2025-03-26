@@ -53,6 +53,12 @@ app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/auth', 'signup.html'));
 });
 
+app.get('*.css', (req, res, next) => {
+  if (req.headers['user-agent'].includes('Mobile')) {
+    res.setHeader('Content-Encoding', 'gzip');
+  }
+  next();
+});
 
 import authRoutes from './routes/auth.js';
 app.use('/api', authRoutes);
